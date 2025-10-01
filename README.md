@@ -7,8 +7,9 @@ A real-time election monitoring application that displays live turnout data for 
 - **Real-time Data**: Automatically fetches and displays live voting data every 20 seconds
 - **Dual Data Sources**: Tracks votes from both Romania and Diaspora separately
 - **Combined View**: Shows aggregated results from all sources
-- **User-friendly Display**: Clean, readable interface for election data
+- **Dark Mode**: Toggle between light and dark themes, with system preference detection
 - **Responsive Design**: Built with React for modern web standards
+- **User-friendly Display**: Clean, readable interface for election data
 - **Caching**: Server-side caching to optimize API calls and performance
 
 ## 🏗️ Architecture
