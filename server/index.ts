@@ -1,17 +1,50 @@
 import express from 'express';
 import cors from 'cors';
 import puppeteer, { Browser } from 'puppeteer';
+import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 app.use(cors());
 
-const AGG_URL =
+// Get current directory for config file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load configuration
+let config: any = {};
+try {
+  const configPath = join(__dirname, 'config.json');
+  config = JSON.parse(readFileSync(configPath, 'utf-8'));
+} catch (error) {
+  console.warn('Could not load config.json, using defaults');
+}
+
+// API URLs - priority: environment variables > config file > defaults
+const AGG_URL = process.env.ROMANIA_API_URL || 
+  config.apiUrls?.romania || 
   'https://prezenta.roaep.ro/prezidentiale04052025/data/json/sicpv/pv/pv_aggregated.json';
-const AGG_URL_DIAS =
+
+const AGG_URL_DIAS = process.env.DIASPORA_API_URL || 
+  config.apiUrls?.diaspora || 
   'https://prezenta.roaep.ro/prezidentiale04052025/data/json/sicpv/pv/pv_aggregated_sr.json';
 
+// Server configuration
+const PORT = process.env.PORT || config.server?.port || 3001;
+const TTL_MS = parseInt(process.env.CACHE_TTL || '') || config.server?.cacheTtl || 30000;
+
+console.log('🔧 Configuration loaded:');
+console.log('📍 Romania API:', AGG_URL);
+console.log('📍 Diaspora API:', AGG_URL_DIAS);
+console.log('🚀 Server Port:', PORT);
+console.log('⏱️  Cache TTL:', TTL_MS + 'ms');
+
 const cache = new Map(); // key -> { value, expiresAt }
-const TTL_MS = 30 * 1000; // cache for 30s (tune as needed)
 
 function setCache(key: string, value: JSON) {
   cache.set(key, { value, expiresAt: Date.now() + TTL_MS });
@@ -236,5 +269,4 @@ process.on('SIGINT', async () => {
   process.exit(0);
 });
 
-const port = process.env.PORT || 3001;
-app.listen(port, () => console.log(`Proxy listening on port ${port}`));
+app.listen(PORT, () => console.log(`🚀 Proxy listening on port ${PORT}`));

@@ -1,0 +1,14 @@
+{
+  "apiUrls": {
+    "romania": "https://prezenta.roaep.ro/prezidentiale04052025/data/json/sicpv/pv/pv_aggregated.json",
+    "diaspora": "https://prezenta.roaep.ro/prezidentiale04052025/data/json/sicpv/pv/pv_aggregated_sr.json"
+  },
+  "server": {
+    "port": 3001,
+    "cacheTtl": 30000
+  },
+  "scraping": {
+    "timeout": 15000,
+    "cacheTimeout": 20000
+  }
+}
